@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Whose left? 3D viewer</title>
+<style>
+  :root { --bg:#f6f6f3; --fg:#1b1b1b; --panel:#ffffffee; --accent:#1d4e89; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#16181c; --fg:#e8e8e8; --panel:#22252bee; --accent:#8fb3d9; } }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px system-ui, sans-serif; overflow:hidden; }
+  #ui { position:absolute; top:12px; left:12px; background:var(--panel); padding:10px 12px; border-radius:8px; max-width:330px; }
+  #ui select { margin:2px 0 6px; width:100%; }
+  .key span { display:inline-block; width:10px; height:10px; border-radius:50%; margin:0 4px 0 8px; }
+  #caption { margin-top:6px; font-size:13px; }
+</style></head>
+<body>
+<div id="ui">
+  <b>Whose left?</b> LLM placements in 3D<br>
+  <label>Model <select id="model"></select></label>
+  <label>Scene <select id="scene"></select></label>
+  <div class="key">Placement matches: <span style="background:#2e9d4f"></span>both <span style="background:#d9822b"></span>viewer only
+    <span style="background:#7b4fd6"></span>object only <span style="background:#c0392b"></span>neither</div>
+  <div id="caption"></div>
+</div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
+<script src="viewer_data.js"></script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { VRButton } from "three/addons/webxr/VRButton.js";
+
+const DATA = window.VIEWER_DATA || [];
+const COLORS = { both: 0x2e9d4f, viewer: 0xd9822b, object: 0x7b4fd6, neither: 0xc0392b };
+const FACE = { away: [0, 1], toward: [0, -1], side: [1, 0] };
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight); renderer.xr.enabled = true;
+document.body.appendChild(renderer.domElement); document.body.appendChild(VRButton.createButton(renderer));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(getComputedStyle(document.body).backgroundColor);
+const cam = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 100);
+cam.position.set(0, 4, 9);  // the plan's camera sits at y = -10, so the 3D view looks from that side
+const controls = new OrbitControls(cam, renderer.domElement); controls.target.set(0, 0, 0); controls.update();
+scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.2));
+const grid = new THREE.GridHelper(12, 12, 0x888888, 0xcccccc); scene.add(grid);
+const group = new THREE.Group(); scene.add(group);
+
+// floor-plan (x, y) -> three.js (x, z): plan +y (away from camera) is -z
+const P = (x, y, h = 0) => new THREE.Vector3(x, h, -y);
+
+const models = [...new Set(DATA.map(d => d.model))];
+const scenes = [...new Set(DATA.map(d => `${d.anchor} | ${d.facing} | ${d.rel} | ${d.frame}`))];
+const mSel = document.getElementById("model"), sSel = document.getElementById("scene");
+models.forEach(m => mSel.add(new Option(m, m))); scenes.forEach(s => sSel.add(new Option(s, s)));
+
+function draw() {
+  group.clear();
+  const [anchor, facing, rel, frame] = sSel.value.split(" | ");
+  const box = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.6, 0.8), new THREE.MeshStandardMaterial({ color: 0x8fb3d9 }));
+  box.position.copy(P(0, 0, 0.3)); const [fx, fy] = FACE[facing];
+  box.rotation.y = Math.atan2(fx, -fy); group.add(box);
+  group.add(new THREE.ArrowHelper(P(fx, fy).normalize(), P(0, 0, 0.7), 1.2, 0x1d4e89));
+  const viewer = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.6, 16), new THREE.MeshStandardMaterial({ color: 0x444444 }));
+  viewer.position.copy(P(0, -5, 0.3)); group.add(viewer);
+  const rows = DATA.filter(d => d.model === mSel.value && d.anchor === anchor && d.facing === facing && d.rel === rel && d.frame === frame);
+  rows.forEach((d, i) => {
+    const s = new THREE.Mesh(new THREE.SphereGeometry(0.22, 24, 16), new THREE.MeshStandardMaterial({ color: COLORS[d.label] ?? 0x999999 }));
+    s.position.copy(P(d.x + i * 0.05, d.y, 0.22)); group.add(s);
+  });
+  document.getElementById("caption").textContent =
+    `"${rel}" of the ${anchor} (${frame} instruction); the ${anchor} faces ${facing}. ` +
+    `${rows.length} paraphrases: ` + rows.map(r => r.label).join(", ");
+}
+mSel.onchange = sSel.onchange = draw; if (DATA.length) draw();
+addEventListener("resize", () => { cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+renderer.setAnimationLoop(() => renderer.render(scene, cam));
+</script></body></html>

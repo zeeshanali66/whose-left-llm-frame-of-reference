@@ -1,0 +1,210 @@
+[
+ {
+  "q": 1,
+  "question": "Put the lamp to the left of the sofa. Which spot (A, B, C or D)?",
+  "anchor": "sofa",
+  "facing": "toward",
+  "rel": "left",
+  "spot_labels": {
+   "A": "neither",
+   "B": "viewer",
+   "C": "neither",
+   "D": "object"
+  }
+ },
+ {
+  "q": 2,
+  "question": "Put the lamp in front of the sofa. Which spot (A, B, C or D)?",
+  "anchor": "sofa",
+  "facing": "toward",
+  "rel": "front",
+  "spot_labels": {
+   "A": "neither",
+   "B": "neither",
+   "C": "neither",
+   "D": "both"
+  }
+ },
+ {
+  "q": 3,
+  "question": "Put the lamp to the left of the sofa. Which spot (A, B, C or D)?",
+  "anchor": "sofa",
+  "facing": "side",
+  "rel": "left",
+  "spot_labels": {
+   "A": "neither",
+   "B": "object",
+   "C": "neither",
+   "D": "viewer"
+  }
+ },
+ {
+  "q": 4,
+  "question": "Put the lamp in front of the sofa. Which spot (A, B, C or D)?",
+  "anchor": "sofa",
+  "facing": "side",
+  "rel": "front",
+  "spot_labels": {
+   "A": "viewer",
+   "B": "neither",
+   "C": "object",
+   "D": "neither"
+  }
+ },
+ {
+  "q": 5,
+  "question": "Put the traffic cone to the left of the car. Which spot (A, B, C or D)?",
+  "anchor": "car",
+  "facing": "toward",
+  "rel": "left",
+  "spot_labels": {
+   "A": "viewer",
+   "B": "neither",
+   "C": "neither",
+   "D": "object"
+  }
+ },
+ {
+  "q": 6,
+  "question": "Put the traffic cone in front of the car. Which spot (A, B, C or D)?",
+  "anchor": "car",
+  "facing": "toward",
+  "rel": "front",
+  "spot_labels": {
+   "A": "both",
+   "B": "neither",
+   "C": "neither",
+   "D": "neither"
+  }
+ },
+ {
+  "q": 7,
+  "question": "Put the traffic cone to the left of the car. Which spot (A, B, C or D)?",
+  "anchor": "car",
+  "facing": "side",
+  "rel": "left",
+  "spot_labels": {
+   "A": "object",
+   "B": "viewer",
+   "C": "neither",
+   "D": "neither"
+  }
+ },
+ {
+  "q": 8,
+  "question": "Put the traffic cone in front of the car. Which spot (A, B, C or D)?",
+  "anchor": "car",
+  "facing": "side",
+  "rel": "front",
+  "spot_labels": {
+   "A": "object",
+   "B": "neither",
+   "C": "viewer",
+   "D": "neither"
+  }
+ },
+ {
+  "q": 9,
+  "question": "Put the plant to the left of the armchair. Which spot (A, B, C or D)?",
+  "anchor": "armchair",
+  "facing": "toward",
+  "rel": "left",
+  "spot_labels": {
+   "A": "object",
+   "B": "neither",
+   "C": "neither",
+   "D": "viewer"
+  }
+ },
+ {
+  "q": 10,
+  "question": "Put the plant in front of the armchair. Which spot (A, B, C or D)?",
+  "anchor": "armchair",
+  "facing": "toward",
+  "rel": "front",
+  "spot_labels": {
+   "A": "neither",
+   "B": "neither",
+   "C": "neither",
+   "D": "both"
+  }
+ },
+ {
+  "q": 11,
+  "question": "Put the plant to the left of the armchair. Which spot (A, B, C or D)?",
+  "anchor": "armchair",
+  "facing": "side",
+  "rel": "left",
+  "spot_labels": {
+   "A": "viewer",
+   "B": "neither",
+   "C": "neither",
+   "D": "object"
+  }
+ },
+ {
+  "q": 12,
+  "question": "Put the plant in front of the armchair. Which spot (A, B, C or D)?",
+  "anchor": "armchair",
+  "facing": "side",
+  "rel": "front",
+  "spot_labels": {
+   "A": "neither",
+   "B": "viewer",
+   "C": "object",
+   "D": "neither"
+  }
+ },
+ {
+  "q": 13,
+  "question": "Put the ball to the left of the person. Which spot (A, B, C or D)?",
+  "anchor": "person",
+  "facing": "toward",
+  "rel": "left",
+  "spot_labels": {
+   "A": "neither",
+   "B": "viewer",
+   "C": "neither",
+   "D": "object"
+  }
+ },
+ {
+  "q": 14,
+  "question": "Put the ball in front of the person. Which spot (A, B, C or D)?",
+  "anchor": "person",
+  "facing": "toward",
+  "rel": "front",
+  "spot_labels": {
+   "A": "both",
+   "B": "neither",
+   "C": "neither",
+   "D": "neither"
+  }
+ },
+ {
+  "q": 15,
+  "question": "Put the ball to the left of the person. Which spot (A, B, C or D)?",
+  "anchor": "person",
+  "facing": "side",
+  "rel": "left",
+  "spot_labels": {
+   "A": "viewer",
+   "B": "neither",
+   "C": "object",
+   "D": "neither"
+  }
+ },
+ {
+  "q": 16,
+  "question": "Put the ball in front of the person. Which spot (A, B, C or D)?",
+  "anchor": "person",
+  "facing": "side",
+  "rel": "front",
+  "spot_labels": {
+   "A": "neither",
+   "B": "neither",
+   "C": "object",
+   "D": "viewer"
+  }
+ }
+]

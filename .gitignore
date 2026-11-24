@@ -1,0 +1,6 @@
+# private planning notes
+PLAN.md
+__pycache__/
+# local logs
+results/*.log
+results/*.err
