@@ -157,6 +157,11 @@ def results():
     if len(K):
         t5 = K.assign(asked=K["label"] == "asked").pivot_table(index="model", columns="axis", values="asked", aggfunc="mean").round(2)
         lines += ["## RQ5: clarification rate (ideal: high for conflict/orthogonal, low for agree)\n", "```\n" + t5.to_string() + "\n```", ""]
+        # does the question actually ask about the frame ("your left or the sofa's left?"), or about something else?
+        fq = re.compile(r"perspective|point of view|viewpoint|whose|your left|camera|facing|own left|from where|view", re.I)
+        Q = K[K["label"] == "asked"]
+        nf = int(Q["raw"].str.contains(fq).sum())
+        lines += [f"Questions asked: {len(Q)} of {len(K)} ask-condition prompts; questions that mention the frame or perspective: {nf}.\n"]
     R = R[R["frame"] != "ask"]  # RQ1-2 and consistency use the non-ask prompts
     # RQ1: which frame do models use when the instruction is ambiguous and the frames disagree?
     A = R[(R["frame"] == "ambiguous") & (R["axis"] != "agree")]
@@ -171,6 +176,19 @@ def results():
     g = R.groupby(["model", "anchor", "facing", "rel", "frame"])["label"].nunique()
     lines += [f"## Paraphrase consistency\n\nShare of items with the same label across all 3 paraphrases: "
               + ", ".join(f"{m}: {(s == 1).mean():.2f}" for m, s in g.groupby(level=0)) + "\n"]
+    # figure: explicit-frame accuracy when the frames agree vs conflict
+    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+    fig, axs = plt.subplots(1, 2, figsize=(10, 3.8), sharey=True)
+    for ax, fr in zip(axs, ["viewer", "object"]):
+        t = t2.xs(fr, level="frame")[["agree", "conflict"]]
+        t.plot.bar(ax=ax, color=["#5b8def", "#e07b39"], rot=20, legend=(fr == "viewer"))
+        ax.set_title(f"'{fr}' frame stated explicitly"); ax.set_ylim(0, 1); ax.set_xlabel("")
+    axs[0].set_ylabel("share placed correctly")
+    fig.tight_layout(); fig.savefig(os.path.join(RES, "fig_rq2_accuracy.png"), dpi=150); plt.close(fig)
+    # data for the three.js / WebXR viewer
+    V = pd.read_json(OUT, lines=True).drop(columns=["raw"])
+    with open(os.path.join(HERE, "viewer", "viewer_data.js"), "w", encoding="utf-8") as f:
+        f.write("window.VIEWER_DATA=" + V.to_json(orient="records") + ";\n")
     with open(os.path.join(RES, "RESULTS.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
     print("\n".join(lines))
