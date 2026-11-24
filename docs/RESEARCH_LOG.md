@@ -21,6 +21,13 @@ Llama 3.1 8B looked the most consistent across paraphrases (0.96). Looking at th
 ### 7. Running unattended overnight on one home GPU (8 GB)
 A watchdog script stops the run if the GPU passes 84 °C and logs temperatures every 30 s (no alerts in this run; peak 66 °C). The run is resumable: finished prompts are skipped on restart.
 
+### 8. Part 2: testing fixes
+After finding the failure, we tested four fixes on the 3 strongest models (first paraphrase only, since part 1 showed
+small paraphrase effects for them). Design choices: the reason-first example JSON originally showed "+x" as the
+direction, which could bias answers, so it was replaced by a neutral placeholder; answers given in the object's own
+coordinates are rotated back to the world before checking, with unit tests for the rotation.
+Result: hints and object-centred coordinates fix most errors; asking the model to reason first does not.
+
 ## Next steps
 - Run the human survey (RQ3) to see which reading people expect.
 - Test whether giving the model the user's position or gaze direction in the prompt removes the ambiguity.

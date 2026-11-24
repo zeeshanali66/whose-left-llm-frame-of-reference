@@ -46,6 +46,28 @@ Full tables: [`results/RESULTS.md`](results/RESULTS.md). Problems we hit and how
 
 Limitations: a top-down 2D abstraction of a 3D room, one temperature-0 sample per prompt, and five small local models. The human survey (RQ3) is prepared in `survey/` but not yet run.
 
+
+## Part 2: fixes (1,080 outputs, 3 strongest models)
+Accuracy when the frame is stated (all 3 models; part-1 baseline = same prompts without a fix):
+
+| Requested frame, fix | frames agree | frames conflict | sideways |
+|---|---|---|---|
+| object's own view, no fix | 0.77 | 0.42 | 0.42 |
+| object's own view, **hint** ("the sofa's left is the +x direction") | 1.00 | 1.00 | 0.92 |
+| object's own view, **scene in the sofa's own coordinates** | 0.88 | 0.88 | 0.88 |
+| object's own view, reason first (state the direction, then place) | 0.70 | 0.52 | 0.35 |
+| viewer's view, no fix / hint | 0.70 / 1.00 | 0.57 / 1.00 | 0.52 / 1.00 |
+
+- Models follow a direction perfectly once it is computed for them, and **describing the scene in the object's own
+  coordinates** removes most of the failure without telling the answer (Gemma 4 1.00, Qwen 3.5 0.95, Gemma 3 0.70 on
+  conflicting items, up from 0.65 / 0.40 / 0.20).
+- **Reasoning first does not help**: models often state the wrong direction (correct only 33-75% of the time), so the
+  failure is in the spatial transformation itself.
+- **Asking**: even when told that "left" can mean two things, only Gemma 4 sometimes asked, and mostly when it should
+  (10% when the frames agree, 50% when they conflict, 35% sideways). The other models still never asked.
+- Same lesson as the robot study ([Says vs. Does](https://github.com/zeeshanali66/says-vs-does-llm-robot-intent)):
+  do the geometry for the model rather than asking it to.
+
 ## Disclosure
 Code and documentation were written with the help of an AI assistant; the research design, checking and
 decisions are the author's.
